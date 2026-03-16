@@ -7,6 +7,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 
 const ResultView = dynamic(() => import("@/components/results/ResultView"), { ssr: false });
+const HomeFeatures = dynamic(() => import("@/components/HomeFeatures"), { ssr: false });
 
 export default function Home() {
   const { user, token } = useAuth();
@@ -16,6 +17,11 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const handleExample = (q: string) => {
+    setQuery(q);
+    handleSearch(q);
+  };
 
   const handleSearch = async (q?: string) => {
     const term = (q ?? query).trim();
@@ -103,6 +109,11 @@ export default function Home() {
         <div className="font-mono text-sm text-mono-red mb-6">
           ✕ {error}
         </div>
+      )}
+
+      {/* Features shown when idle */}
+      {!result && !loading && !error && (
+        <HomeFeatures onExample={handleExample} />
       )}
 
       {/* Results */}

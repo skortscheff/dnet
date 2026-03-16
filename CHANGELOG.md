@@ -4,7 +4,18 @@ All notable changes to this project are documented here.
 
 ---
 
-## [Unreleased] — Phase 3
+## [Unreleased] — Homepage enhancements
+
+### Added
+- **Capabilities section** — homepage now displays a 3-column grid of platform feature cards (DNS, BGP, Mail, TLS/HTTP, IP Intelligence, Monitoring) when no result is active
+- **Guided troubleshooting workflows** — four operator-focused workflow cards ("Why is my email failing?", "Why is DNS wrong after a cutover?", etc.) showing the diagnostic steps the platform covers
+- **Clickable example queries** — 8 example inputs (IPs, domains, ASNs, prefixes) that populate the search box and run immediately on click
+- **API callout** — inline banner linking to `/api/docs` with a sample `curl` command
+- New component `HomeFeatures` isolates all landing page content, rendered lazily so it doesn't affect search performance
+
+---
+
+## [Phase 3]
 
 ### Added
 - **Watchlists** — users can track domains, IPs, ASNs, and prefixes with configurable check intervals (5 min – 24 hours)
