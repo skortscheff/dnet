@@ -68,9 +68,9 @@ export default function ResultView({ result, onSearch }: Props) {
           {mailData && !mailLoading && <MailResult data={mailData} />}
         </>
       ) : input_type === "asn" ? (
-        <BgpResult data={data} input_type="asn" />
+        <BgpResult data={data} input_type="asn" onSearch={onSearch} />
       ) : input_type === "cidr4" || input_type === "cidr6" ? (
-        <BgpResult data={data} input_type="prefix" />
+        <BgpResult data={data} input_type="prefix" onSearch={onSearch} />
       ) : input_type === "url" ? (
         <HttpResult data={data} />
       ) : input_type === "email" ? (
