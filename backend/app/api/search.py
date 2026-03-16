@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app.bgp.service import lookup_asn, lookup_prefix
 from app.dns.service import lookup_dns
 from app.ip.service import lookup_ip
 from app.lookup.detector import InputType, detect
@@ -26,9 +27,14 @@ async def search(req: SearchRequest) -> LookupResponse:
             pivots = [f"/api/v1/dns/{normalized}", f"/api/v1/mail/{normalized}"]
 
         elif input_type in (InputType.CIDR4, InputType.CIDR6):
+            result = await lookup_prefix(normalized)
+            asns = result.get("origin_asns", [])
             pivots = [f"/api/v1/prefix/{normalized}"]
+            if asns:
+                pivots.append(f"/api/v1/asn/AS{asns[0]['asn']}")
 
         elif input_type == InputType.ASN:
+            result = await lookup_asn(normalized)
             pivots = [f"/api/v1/asn/{normalized}"]
 
         elif input_type == InputType.URL:
