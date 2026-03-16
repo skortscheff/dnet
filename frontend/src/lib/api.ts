@@ -27,6 +27,11 @@ export async function getPermalink(id: string): Promise<import("./types").Lookup
   return handle(res);
 }
 
+export async function getMyIp(): Promise<import("./types").LookupResponse> {
+  const res = await fetch(`${BASE}/ip/me`);
+  return handle(res);
+}
+
 export async function register(email: string, password: string): Promise<import("./types").UserOut> {
   const res = await fetch(`${BASE}/auth/register`, {
     method: "POST",

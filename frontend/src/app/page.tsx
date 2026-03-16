@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { search, saveResult } from "@/lib/api";
+import { search, saveResult, getMyIp } from "@/lib/api";
 import type { LookupResponse } from "@/lib/types";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -17,6 +17,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [myIpLoading, setMyIpLoading] = useState(false);
 
   const handleExample = (q: string) => {
     setQuery(q);
@@ -37,6 +38,22 @@ export default function Home() {
       setError(e instanceof Error ? e.message : "Search failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMyIp = async () => {
+    setMyIpLoading(true);
+    setError(null);
+    setResult(null);
+    setSaved(false);
+    try {
+      const data = await getMyIp();
+      setQuery(data.normalized);
+      setResult(data);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Could not detect your IP");
+    } finally {
+      setMyIpLoading(false);
     }
   };
 
@@ -95,9 +112,18 @@ export default function Home() {
           {loading ? "..." : "Search"}
         </button>
       </div>
-      <p className="text-xs text-slate-600 mb-8 font-mono">
-        Accepts IP, domain, ASN (AS15169), CIDR (1.1.1.0/24), URL, or email address
-      </p>
+      <div className="flex items-center justify-between mb-8">
+        <p className="text-xs text-slate-600 font-mono">
+          Accepts IP, domain, ASN (AS15169), CIDR (1.1.1.0/24), URL, or email address
+        </p>
+        <button
+          onClick={handleMyIp}
+          disabled={myIpLoading || loading}
+          className="text-xs font-mono text-accent hover:text-accent-hover transition-colors disabled:opacity-50 shrink-0 ml-4"
+        >
+          {myIpLoading ? "detecting..." : "What's my IP? →"}
+        </button>
+      </div>
 
       {/* Status line */}
       {loading && (
