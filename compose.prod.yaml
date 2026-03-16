@@ -1,0 +1,26 @@
+services:
+  nginx:
+    restart: always
+
+  frontend:
+    restart: always
+    env_file:
+      - .env.prod
+
+  api:
+    restart: always
+    env_file:
+      - .env.prod
+
+  worker:
+    restart: always
+    env_file:
+      - .env.prod
+
+  postgres:
+    restart: always
+    env_file:
+      - .env.prod
+
+  redis:
+    restart: always

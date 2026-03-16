@@ -1,0 +1,35 @@
+services:
+  frontend:
+    build:
+      target: dev
+    command: npm run dev
+    volumes:
+      - ./frontend:/app:delegated
+      - /app/node_modules
+    environment:
+      NODE_ENV: development
+    env_file:
+      - .env.dev
+
+  api:
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    volumes:
+      - ./backend/app:/app/app:delegated
+    env_file:
+      - .env.dev
+
+  worker:
+    command: ["celery", "-A", "main.celery_app", "worker", "--loglevel=debug", "--concurrency=2"]
+    volumes:
+      - ./backend/app:/app/app:delegated
+      - ./worker/main.py:/app/main.py:ro
+    env_file:
+      - .env.dev
+
+  postgres:
+    env_file:
+      - .env.dev
+
+  redis:
+    ports:
+      - "6379:6379"
