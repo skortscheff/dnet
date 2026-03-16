@@ -128,7 +128,9 @@ dnet-tools/
 │   │   ├── http_tls/       # TLS/HTTP module
 │   │   ├── reachability/   # Reachability module
 │   │   ├── reputation/     # Reputation module
-│   │   ├── auth/           # Authentication
+│   │   ├── auth/           # Registration, login, JWT
+│   │   ├── api_keys/       # API key management
+│   │   ├── saved_results/  # User-linked lookup history
 │   │   ├── lookup/         # Universal search + input detection
 │   │   └── jobs/           # Async job definitions
 │   ├── migrations/         # Alembic migrations
@@ -143,18 +145,34 @@ dnet-tools/
 
 Interactive docs available at `http://localhost/api/docs` when the stack is running.
 
-Planned endpoints:
+Implemented endpoints:
 
 ```
+# Diagnostics (Phase 1)
 POST /api/v1/search          # Universal input detection + routing
-GET  /api/v1/ip/{ip}
-GET  /api/v1/dns/{name}
-GET  /api/v1/asn/{asn}
-GET  /api/v1/prefix/{cidr}
-GET  /api/v1/mail/{domain}
-POST /api/v1/http/check
-POST /api/v1/tls/check
-GET  /api/v1/jobs/{id}       # Poll async job status
+GET  /api/v1/ip/{ip}         # Geo, ASN, rDNS
+GET  /api/v1/dns/{name}      # A/AAAA/MX/NS/TXT/SOA/CNAME/CAA
+GET  /api/v1/asn/{asn}       # ASN overview, announced prefixes
+GET  /api/v1/prefix/{cidr}   # Prefix overview + RPKI validation
+GET  /api/v1/mail/{domain}   # MX/SPF/DKIM/DMARC/MTA-STS/BIMI
+POST /api/v1/http/check      # Redirect chain + security headers
+POST /api/v1/tls/check       # Cert inspection, SANs, expiry, cipher
+GET  /api/v1/lookup/{id}     # Retrieve permalink by ID (7-day TTL)
+
+# Auth (Phase 2)
+POST /api/v1/auth/register
+POST /api/v1/auth/login
+GET  /api/v1/auth/me
+
+# API Keys (Phase 2)
+POST   /api/v1/api-keys
+GET    /api/v1/api-keys
+DELETE /api/v1/api-keys/{id}
+
+# Saved Results (Phase 2)
+POST   /api/v1/saved-results
+GET    /api/v1/saved-results
+DELETE /api/v1/saved-results/{id}
 ```
 
 ---
@@ -206,6 +224,6 @@ To move to a new Linux host:
 | Phase | Scope |
 |-------|-------|
 | **0 — Scaffold** ✅ | Working Compose stack, all 6 services boot |
-| **1 — MVP** | Universal search, public IP, DNS, BGP, mail, TLS/HTTP, permalinks |
-| **2 — Accounts** | User auth, saved results, API keys |
+| **1 — MVP** ✅ | Universal search, public IP, DNS, BGP, mail, TLS/HTTP, permalinks |
+| **2 — Accounts** ✅ | User auth, saved results, API keys |
 | **3 — Premium** | Watchlists, alerts, historical snapshots, team workspaces |
