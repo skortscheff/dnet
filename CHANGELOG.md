@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ---
 
+## [Unreleased] — Homepage UX: prominent "What's my IP?" button
+
+### Changed
+- **`frontend/src/app/page.tsx`** — replaced the small `text-xs` text link with a full-width card button featuring an icon, bold title, and descriptive subtitle ("Find your public IP address, location, and ASN instantly"); card highlights on hover, shows a spinner during detection, and hides once results are displayed
+- Public IP detection continues to use client-side fetch to `api64.ipify.org` so the real browser IP is always returned regardless of Docker bridge / reverse-proxy topology
+
+---
+
 ## [Unreleased] — Portability and deployment
 
 ### Added
