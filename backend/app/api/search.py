@@ -5,6 +5,7 @@ from app.dns.service import lookup_dns
 from app.ip.service import lookup_ip
 from app.lookup.detector import InputType, detect
 from app.lookup.schemas import LookupResponse, SearchRequest
+from app.lookup.store import save_result
 
 router = APIRouter()
 
@@ -53,7 +54,7 @@ async def search(req: SearchRequest) -> LookupResponse:
     except Exception as exc:
         error = str(exc)
 
-    return LookupResponse(
+    response = LookupResponse(
         input=req.q,
         input_type=str(input_type),
         normalized=normalized,
@@ -61,3 +62,12 @@ async def search(req: SearchRequest) -> LookupResponse:
         pivots=pivots,
         error=error,
     )
+
+    # Save to Redis — best-effort, never fails the request
+    try:
+        permalink_id = await save_result(response.model_dump(mode="json"))
+        response.permalink_id = permalink_id
+    except Exception:
+        pass
+
+    return response

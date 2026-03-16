@@ -21,3 +21,4 @@ class LookupResponse(BaseModel):
     result: dict[str, Any] = {}
     pivots: list[str] = []
     error: str | None = None
+    permalink_id: str | None = None
