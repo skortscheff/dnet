@@ -1,9 +1,7 @@
 FROM python:3.12-slim
 
-# Install corporate CA chain so containers can reach external HTTPS services
-COPY backend/ds-ca-chain.crt /usr/local/share/ca-certificates/ds-ca-chain.crt
+# Install CA certificates so containers can make HTTPS connections to external services
 RUN apt-get update -qq && apt-get install -y --no-install-recommends ca-certificates \
-    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

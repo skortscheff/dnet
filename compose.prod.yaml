@@ -4,6 +4,8 @@ services:
 
   frontend:
     restart: always
+    build:
+      target: runner
     env_file:
       - .env.prod
 

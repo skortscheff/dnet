@@ -4,6 +4,32 @@ All notable changes to this project are documented here.
 
 ---
 
+## [Unreleased] — Portability and deployment
+
+### Added
+- **`scripts/deploy.sh`** — one-command production deploy script: checks prerequisites, generates `.env.prod` with random secrets, builds images, waits for Postgres, runs migrations, starts all services
+- **`nginx/conf.d/ssl.conf.example`** — ready-to-use HTTPS nginx config with Let's Encrypt paths, modern TLS settings, and HSTS; includes inline cert renewal instructions
+- **`make deploy` / `make prod-*` targets** — Makefile now has a full set of production commands (`prod-up`, `prod-down`, `prod-build`, `prod-logs`, `prod-ps`, `prod-migrate`, `deploy`)
+- **`compose.prod.yaml`** — now sets `build.target: runner` for the frontend (standalone production Next.js build)
+
+### Changed
+- **`backend/Dockerfile`** and **`worker/Dockerfile`** — removed hard-coded corporate CA certificate (`ds-ca-chain.crt`); images now install system CAs only and work on any Docker host
+- **`.env.example`** — expanded with inline comments explaining every variable and production vs development differences
+- **`README.md`** — comprehensive rewrite with two deployment paths (one-command and manual), HTTPS setup walkthrough, cert renewal cron example, full API reference, and updated project layout
+
+---
+
+## [Unreleased] — Mail health fix
+
+### Fixed
+- **`MailResult.tsx`** — rewritten with correct nested data interfaces matching the actual API response shape (`mx.records[].host`, `spf.record/valid`, `dmarc.policy/rua`, `dkim.selectors_found`, `mta_sts.dns_record_found`)
+- **`ResultView.tsx`** — domain searches now auto-fetch `/api/v1/mail/{domain}` client-side and render `MailResult` below `DnsResult`; shows a loading pulse while the mail check runs
+
+### Added
+- `gmail.com` mail example added to homepage example strip
+
+---
+
 ## [Unreleased] — Dark/light mode theme toggle
 
 ### Added
