@@ -18,6 +18,10 @@ from app.core.database import Base
 from app.auth.models import User  # noqa: F401
 from app.api_keys.models import ApiKey  # noqa: F401
 from app.saved_results.models import SavedResult  # noqa: F401
+from app.teams.models import Team, TeamMember  # noqa: F401
+from app.watchlists.models import Watchlist  # noqa: F401
+from app.alerts.models import Alert  # noqa: F401
+from app.snapshots.models import Snapshot  # noqa: F401
 target_metadata = Base.metadata
 
 # Override sqlalchemy.url from environment if set.

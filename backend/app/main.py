@@ -12,6 +12,9 @@ from app.mail.router import router as mail_router
 from app.auth.router import router as auth_router
 from app.api_keys.router import router as api_keys_router
 from app.saved_results.router import router as saved_results_router
+from app.watchlists.router import router as watchlists_router
+from app.alerts.router import router as alerts_router
+from app.teams.router import router as teams_router
 from app.core.config import settings
 
 app = FastAPI(
@@ -40,3 +43,6 @@ app.include_router(mail_router, prefix="/api/v1")
 app.include_router(http_tls_router, prefix="/api/v1")
 app.include_router(api_keys_router, prefix="/api/v1")
 app.include_router(saved_results_router, prefix="/api/v1")
+app.include_router(watchlists_router, prefix="/api/v1")
+app.include_router(alerts_router, prefix="/api/v1")
+app.include_router(teams_router, prefix="/api/v1")

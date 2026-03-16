@@ -43,3 +43,49 @@ export interface SavedResultOut {
   input_type: string;
   created_at: string;
 }
+
+export interface WatchlistOut {
+  id: string;
+  user_id: string;
+  team_id: string | null;
+  label: string;
+  input: string;
+  input_type: string;
+  check_interval_minutes: number;
+  last_checked_at: string | null;
+  created_at: string;
+}
+
+export interface AlertOut {
+  id: string;
+  user_id: string;
+  watchlist_id: string;
+  name: string;
+  channel_type: string;
+  channel_url: string;
+  is_active: boolean;
+  last_triggered_at: string | null;
+  created_at: string;
+}
+
+export interface SnapshotOut {
+  id: string;
+  watchlist_id: string;
+  result_data: Record<string, unknown>;
+  taken_at: string;
+}
+
+export interface TeamOut {
+  id: string;
+  name: string;
+  owner_id: string;
+  created_at: string;
+}
+
+export interface TeamMemberOut {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: string;
+  joined_at: string;
+}

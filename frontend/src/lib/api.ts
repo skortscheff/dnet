@@ -94,3 +94,122 @@ export async function deleteSavedResult(token: string, id: string): Promise<void
   });
   return handle(res);
 }
+
+// --- Watchlists ---
+
+export async function listWatchlists(token: string): Promise<import("./types").WatchlistOut[]> {
+  const res = await fetch(`${BASE}/watchlists`, { headers: authHeader(token) });
+  return handle(res);
+}
+
+export async function createWatchlist(
+  token: string,
+  data: { label: string; input: string; input_type: string; check_interval_minutes: number; team_id?: string }
+): Promise<import("./types").WatchlistOut> {
+  const res = await fetch(`${BASE}/watchlists`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeader(token) },
+    body: JSON.stringify(data),
+  });
+  return handle(res);
+}
+
+export async function deleteWatchlist(token: string, id: string): Promise<void> {
+  const res = await fetch(`${BASE}/watchlists/${id}`, {
+    method: "DELETE",
+    headers: authHeader(token),
+  });
+  return handle(res);
+}
+
+export async function listSnapshots(token: string, watchlistId: string): Promise<import("./types").SnapshotOut[]> {
+  const res = await fetch(`${BASE}/watchlists/${watchlistId}/snapshots`, { headers: authHeader(token) });
+  return handle(res);
+}
+
+// --- Alerts ---
+
+export async function listAlerts(token: string, watchlistId?: string): Promise<import("./types").AlertOut[]> {
+  const url = watchlistId ? `${BASE}/alerts?watchlist_id=${watchlistId}` : `${BASE}/alerts`;
+  const res = await fetch(url, { headers: authHeader(token) });
+  return handle(res);
+}
+
+export async function createAlert(
+  token: string,
+  data: { watchlist_id: string; name: string; channel_url: string; channel_type?: string; is_active?: boolean }
+): Promise<import("./types").AlertOut> {
+  const res = await fetch(`${BASE}/alerts`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeader(token) },
+    body: JSON.stringify(data),
+  });
+  return handle(res);
+}
+
+export async function updateAlert(
+  token: string,
+  id: string,
+  data: { name?: string; channel_url?: string; is_active?: boolean }
+): Promise<import("./types").AlertOut> {
+  const res = await fetch(`${BASE}/alerts/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...authHeader(token) },
+    body: JSON.stringify(data),
+  });
+  return handle(res);
+}
+
+export async function deleteAlert(token: string, id: string): Promise<void> {
+  const res = await fetch(`${BASE}/alerts/${id}`, {
+    method: "DELETE",
+    headers: authHeader(token),
+  });
+  return handle(res);
+}
+
+// --- Teams ---
+
+export async function listTeams(token: string): Promise<import("./types").TeamOut[]> {
+  const res = await fetch(`${BASE}/teams`, { headers: authHeader(token) });
+  return handle(res);
+}
+
+export async function createTeam(token: string, name: string): Promise<import("./types").TeamOut> {
+  const res = await fetch(`${BASE}/teams`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeader(token) },
+    body: JSON.stringify({ name }),
+  });
+  return handle(res);
+}
+
+export async function deleteTeam(token: string, id: string): Promise<void> {
+  const res = await fetch(`${BASE}/teams/${id}`, {
+    method: "DELETE",
+    headers: authHeader(token),
+  });
+  return handle(res);
+}
+
+export async function listTeamMembers(token: string, teamId: string): Promise<import("./types").TeamMemberOut[]> {
+  const res = await fetch(`${BASE}/teams/${teamId}/members`, { headers: authHeader(token) });
+  return handle(res);
+}
+
+export async function inviteTeamMember(token: string, teamId: string, email: string): Promise<import("./types").TeamMemberOut> {
+  const res = await fetch(`${BASE}/teams/${teamId}/members`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeader(token) },
+    body: JSON.stringify({ email }),
+  });
+  return handle(res);
+}
+
+export async function removeTeamMember(token: string, teamId: string, userId: string): Promise<void> {
+  const res = await fetch(`${BASE}/teams/${teamId}/members/${userId}`, {
+    method: "DELETE",
+    headers: authHeader(token),
+  });
+  return handle(res);
+}
