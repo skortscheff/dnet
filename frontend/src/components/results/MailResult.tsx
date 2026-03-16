@@ -1,30 +1,60 @@
 "use client";
 
-interface MxEntry {
-  exchange: string;
+import React from "react";
+
+interface MxRecord {
   priority: number;
+  host: string;
+}
+
+interface MxData {
+  records: MxRecord[];
+  found: boolean;
+}
+
+interface SpfData {
+  found: boolean;
+  record: string | null;
+  valid: boolean;
+}
+
+interface DmarcData {
+  found: boolean;
+  record: string | null;
+  policy: string | null;
+  rua: string | null;
+}
+
+interface DkimData {
+  selectors_found: string[];
+  selectors_checked: string[];
+}
+
+interface MtaStsData {
+  dns_record_found: boolean;
+}
+
+interface BimiData {
+  found: boolean;
+  record: string | null;
 }
 
 interface HealthSummary {
-  has_mx?: boolean;
-  has_spf?: boolean;
-  has_dmarc?: boolean;
-  has_dkim?: boolean;
-  has_mta_sts?: boolean;
-  spf_passes?: boolean;
-  dmarc_passes?: boolean;
+  mx_ok: boolean;
+  spf_ok: boolean;
+  dmarc_ok: boolean;
+  dkim_ok: boolean;
 }
 
 interface MailData {
   domain?: string | null;
-  mx?: MxEntry[];
-  spf?: string | null;
-  dmarc?: string | null;
-  dkim_found?: boolean;
-  dkim_selector?: string | null;
-  mta_sts?: string | null;
-  bimi?: string | null;
-  health_summary?: HealthSummary | null;
+  mx?: MxData;
+  spf?: SpfData;
+  dmarc?: DmarcData;
+  dkim?: DkimData;
+  mta_sts?: MtaStsData;
+  bimi?: BimiData;
+  health_summary?: HealthSummary;
 }
 
 interface Props {
@@ -50,8 +80,13 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
 
 export default function MailResult({ data }: Props) {
   const d = data as MailData;
-  const h = d.health_summary ?? {};
-  const mx = d.mx ?? [];
+  const h = d.health_summary;
+  const mx = d.mx;
+  const spf = d.spf;
+  const dmarc = d.dmarc;
+  const dkim = d.dkim;
+  const mta_sts = d.mta_sts;
+  const bimi = d.bimi;
 
   return (
     <div className="card p-5 space-y-5">
@@ -61,138 +96,145 @@ export default function MailResult({ data }: Props) {
       </div>
 
       {/* Health badges */}
-      <div className="flex flex-wrap gap-2">
-        <HealthBadge ok={!!h.has_mx} label="MX" />
-        <HealthBadge ok={!!h.has_spf} label="SPF" />
-        <HealthBadge ok={!!h.has_dmarc} label="DMARC" />
-        <HealthBadge ok={!!h.has_dkim} label="DKIM" />
-        <HealthBadge ok={!!h.has_mta_sts} label="MTA-STS" />
-      </div>
+      {h && (
+        <div className="flex flex-wrap gap-2">
+          <HealthBadge ok={h.mx_ok} label="MX" />
+          <HealthBadge ok={h.spf_ok} label="SPF" />
+          <HealthBadge ok={h.dmarc_ok} label="DMARC" />
+          <HealthBadge ok={h.dkim_ok} label="DKIM" />
+          {mta_sts && <HealthBadge ok={mta_sts.dns_record_found} label="MTA-STS" />}
+        </div>
+      )}
 
       {/* MX Records */}
-      {mx.length > 0 && (
+      {mx && (
         <div>
           <div className="section-title">MX Records</div>
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                <th className="table-cell data-label text-left w-20">PRIORITY</th>
-                <th className="table-cell data-label text-left">EXCHANGE</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mx.map((m, i) => (
-                <tr key={i} className="table-row">
-                  <td className="table-cell data-value text-mono-yellow">{m.priority}</td>
-                  <td className="table-cell data-value">{m.exchange}</td>
+          {mx.records.length > 0 ? (
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="table-cell data-label text-left w-20">PRIORITY</th>
+                  <th className="table-cell data-label text-left">HOST</th>
                 </tr>
-              ))}
+              </thead>
+              <tbody>
+                {mx.records.map((m, i) => (
+                  <tr key={i} className="table-row">
+                    <td className="table-cell data-value text-mono-yellow">{m.priority}</td>
+                    <td className="table-cell data-value">{m.host}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-sm text-slate-500 font-mono">No MX records found</p>
+          )}
+        </div>
+      )}
+
+      {/* SPF */}
+      {spf && (
+        <div>
+          <div className="section-title">SPF Record</div>
+          <table className="w-full border-collapse">
+            <tbody>
+              <DetailRow
+                label="RECORD"
+                value={
+                  spf.record ? (
+                    <span className="text-mono-green">{spf.record}</span>
+                  ) : (
+                    <span className="text-slate-500">—</span>
+                  )
+                }
+              />
+              <DetailRow
+                label="VALID"
+                value={
+                  <span className={spf.valid ? "text-mono-green" : "text-mono-red"}>
+                    {spf.valid ? "Yes" : "No"}
+                  </span>
+                }
+              />
             </tbody>
           </table>
         </div>
       )}
 
-      {/* SPF */}
-      <div>
-        <div className="section-title">SPF Record</div>
-        <table className="w-full border-collapse">
-          <tbody>
-            <DetailRow
-              label="RECORD"
-              value={
-                d.spf ? (
-                  <span className="text-mono-green">{d.spf}</span>
-                ) : (
-                  <span className="text-slate-500">—</span>
-                )
-              }
-            />
-            <DetailRow
-              label="PASSES"
-              value={
-                h.spf_passes != null ? (
-                  <span className={h.spf_passes ? "text-mono-green" : "text-mono-red"}>
-                    {h.spf_passes ? "Yes" : "No"}
-                  </span>
-                ) : (
-                  <span className="text-slate-500">—</span>
-                )
-              }
-            />
-          </tbody>
-        </table>
-      </div>
-
       {/* DMARC */}
-      <div>
-        <div className="section-title">DMARC Record</div>
-        <table className="w-full border-collapse">
-          <tbody>
-            <DetailRow
-              label="RECORD"
-              value={
-                d.dmarc ? (
-                  <span className="text-mono-cyan">{d.dmarc}</span>
-                ) : (
-                  <span className="text-slate-500">—</span>
-                )
-              }
-            />
-            <DetailRow
-              label="PASSES"
-              value={
-                h.dmarc_passes != null ? (
-                  <span className={h.dmarc_passes ? "text-mono-green" : "text-mono-red"}>
-                    {h.dmarc_passes ? "Yes" : "No"}
-                  </span>
-                ) : (
-                  <span className="text-slate-500">—</span>
-                )
-              }
-            />
-          </tbody>
-        </table>
-      </div>
-
-      {/* DKIM */}
-      <div>
-        <div className="section-title">DKIM</div>
-        <table className="w-full border-collapse">
-          <tbody>
-            <DetailRow
-              label="FOUND"
-              value={
-                d.dkim_found != null ? (
-                  <span className={d.dkim_found ? "text-mono-green" : "text-mono-red"}>
-                    {d.dkim_found ? "Yes" : "No"}
-                  </span>
-                ) : (
-                  <span className="text-slate-500">—</span>
-                )
-              }
-            />
-            <DetailRow
-              label="SELECTOR"
-              value={d.dkim_selector ?? <span className="text-slate-500">—</span>}
-            />
-          </tbody>
-        </table>
-      </div>
-
-      {/* MTA-STS */}
-      {(d.mta_sts != null || h.has_mta_sts != null) && (
+      {dmarc && (
         <div>
-          <div className="section-title">MTA-STS Policy</div>
+          <div className="section-title">DMARC Record</div>
           <table className="w-full border-collapse">
             <tbody>
               <DetailRow
-                label="POLICY"
+                label="RECORD"
                 value={
-                  d.mta_sts ? (
-                    <span className="text-mono-green">{d.mta_sts}</span>
+                  dmarc.record ? (
+                    <span className="text-mono-cyan break-all">{dmarc.record}</span>
                   ) : (
                     <span className="text-slate-500">—</span>
                   )
+                }
+              />
+              <DetailRow
+                label="POLICY"
+                value={
+                  dmarc.policy ? (
+                    <span className={dmarc.policy === "reject" || dmarc.policy === "quarantine" ? "text-mono-green" : "text-mono-yellow"}>
+                      {dmarc.policy}
+                    </span>
+                  ) : (
+                    <span className="text-slate-500">—</span>
+                  )
+                }
+              />
+              {dmarc.rua && (
+                <DetailRow label="RUA" value={<span className="text-slate-600 dark:text-slate-400">{dmarc.rua}</span>} />
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* DKIM */}
+      {dkim && (
+        <div>
+          <div className="section-title">DKIM</div>
+          <table className="w-full border-collapse">
+            <tbody>
+              <DetailRow
+                label="SELECTORS"
+                value={
+                  dkim.selectors_found.length > 0 ? (
+                    <span className="text-mono-green">{dkim.selectors_found.join(", ")}</span>
+                  ) : (
+                    <span className="text-mono-red">None found</span>
+                  )
+                }
+              />
+              <DetailRow
+                label="CHECKED"
+                value={<span className="text-slate-500">{dkim.selectors_checked.join(", ")}</span>}
+              />
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* MTA-STS */}
+      {mta_sts && (
+        <div>
+          <div className="section-title">MTA-STS</div>
+          <table className="w-full border-collapse">
+            <tbody>
+              <DetailRow
+                label="DNS RECORD"
+                value={
+                  <span className={mta_sts.dns_record_found ? "text-mono-green" : "text-slate-500"}>
+                    {mta_sts.dns_record_found ? "Found" : "Not found"}
+                  </span>
                 }
               />
             </tbody>
@@ -201,10 +243,10 @@ export default function MailResult({ data }: Props) {
       )}
 
       {/* BIMI */}
-      {d.bimi && (
+      {bimi && bimi.found && bimi.record && (
         <div>
           <div className="section-title">BIMI</div>
-          <div className="mono text-slate-700 dark:text-slate-300 break-all">{d.bimi}</div>
+          <div className="mono text-slate-700 dark:text-slate-300 break-all text-sm">{bimi.record}</div>
         </div>
       )}
     </div>

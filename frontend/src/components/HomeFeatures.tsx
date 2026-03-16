@@ -92,6 +92,7 @@ const EXAMPLES: { label: string; query: string; type: string }[] = [
   { label: "AS13335", query: "AS13335", type: "ASN" },
   { label: "2606:4700::/32", query: "2606:4700::/32", type: "Prefix" },
   { label: "smtp.gmail.com", query: "smtp.gmail.com", type: "Domain" },
+  { label: "gmail.com", query: "gmail.com", type: "Mail" },
 ];
 
 const WORKFLOWS: { title: string; steps: string[] }[] = [
