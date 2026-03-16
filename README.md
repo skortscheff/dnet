@@ -116,7 +116,14 @@ dnet-tools/
 ├── .env.example            # Config template
 ├── Makefile                # Developer shortcuts
 ├── nginx/                  # Reverse proxy config
-├── frontend/               # Next.js + TypeScript + Tailwind
+├── frontend/
+│   └── src/
+│       ├── app/            # Next.js pages (/, /login, /register, /dashboard, /r/[id], /settings/api-keys)
+│       ├── components/
+│       │   ├── Navbar.tsx  # Auth-aware top bar
+│       │   ├── Sidebar.tsx # Dashboard/settings nav
+│       │   └── results/    # IP, DNS, BGP, mail, HTTP, TLS result cards
+│       └── lib/            # API client, auth context, shared types
 ├── backend/
 │   ├── app/
 │   │   ├── main.py         # FastAPI entrypoint
