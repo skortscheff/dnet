@@ -29,10 +29,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-[calc(100vh-57px)] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
+        <div className="text-center mb-6">
+          <span className="font-mono font-semibold text-accent tracking-wider text-sm">INTERNET TOOLKIT</span>
+          <p className="text-xs text-slate-500 mt-1">DNS · BGP · mail · TLS · reachability</p>
+        </div>
         <div className="card p-6">
-          <h1 className="font-mono text-base text-slate-900 dark:text-slate-200 mb-6">Sign in</h1>
+          <h1 className="font-mono text-base font-semibold text-slate-900 dark:text-slate-200 mb-5">Sign in</h1>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label className="data-label block mb-1">Email</label>
@@ -41,8 +45,9 @@ export default function LoginPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 className="input-field"
-                placeholder="user@example.com"
+                placeholder="you@example.com"
                 required
+                autoFocus
                 autoComplete="email"
               />
             </div>
@@ -69,10 +74,10 @@ export default function LoginPage() {
               {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
-          <p className="mt-4 text-xs text-slate-500 font-mono">
+          <p className="mt-4 text-xs text-slate-500 font-mono text-center">
             No account?{" "}
             <Link href="/register" className="text-accent hover:text-accent-hover transition-colors">
-              Register
+              Create one free
             </Link>
           </p>
         </div>

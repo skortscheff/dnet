@@ -30,10 +30,14 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-[calc(100vh-57px)] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
+        <div className="text-center mb-6">
+          <span className="font-mono font-semibold text-accent tracking-wider text-sm">INTERNET TOOLKIT</span>
+          <p className="text-xs text-slate-500 mt-1">Free account — no credit card required</p>
+        </div>
         <div className="card p-6">
-          <h1 className="font-mono text-base text-slate-900 dark:text-slate-200 mb-6">Create account</h1>
+          <h1 className="font-mono text-base font-semibold text-slate-900 dark:text-slate-200 mb-5">Create account</h1>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label className="data-label block mb-1">Email</label>
@@ -42,8 +46,9 @@ export default function RegisterPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 className="input-field"
-                placeholder="user@example.com"
+                placeholder="you@example.com"
                 required
+                autoFocus
                 autoComplete="email"
               />
             </div>
@@ -58,6 +63,7 @@ export default function RegisterPage() {
                 required
                 autoComplete="new-password"
               />
+              <p className="text-xs text-slate-500 mt-1">At least 8 characters recommended.</p>
             </div>
             {error && (
               <p className="font-mono text-xs text-mono-red">✕ {error}</p>
@@ -70,7 +76,7 @@ export default function RegisterPage() {
               {loading ? "Creating account..." : "Create account"}
             </button>
           </form>
-          <p className="mt-4 text-xs text-slate-500 font-mono">
+          <p className="mt-4 text-xs text-slate-500 font-mono text-center">
             Already have an account?{" "}
             <Link href="/login" className="text-accent hover:text-accent-hover transition-colors">
               Sign in

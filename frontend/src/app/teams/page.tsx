@@ -3,16 +3,19 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import {
-  listTeams,
-  createTeam,
-  deleteTeam,
-  listTeamMembers,
-  inviteTeamMember,
-  removeTeamMember,
-} from "@/lib/api";
+import { listTeams, createTeam, deleteTeam, listTeamMembers, inviteTeamMember, removeTeamMember } from "@/lib/api";
 import type { TeamOut, TeamMemberOut } from "@/lib/types";
 import Sidebar from "@/components/Sidebar";
+
+function MemberAvatar({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent/10 text-accent font-mono text-xs font-semibold shrink-0 select-none">
+      {label.charAt(0).toUpperCase()}
+    </span>
+  );
+}
+
+const fieldClass = "input-field text-sm";
 
 export default function TeamsPage() {
   const { token, user, loading: authLoading } = useAuth();
@@ -30,6 +33,7 @@ export default function TeamsPage() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviting, setInviting] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
+  const [inviteSuccess, setInviteSuccess] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -67,6 +71,7 @@ export default function TeamsPage() {
 
   async function handleDeleteTeam(id: string) {
     if (!token) return;
+    if (!window.confirm("Delete this team? This cannot be undone.")) return;
     try {
       await deleteTeam(token, id);
       const remaining = teams.filter((t) => t.id !== id);
@@ -83,10 +88,13 @@ export default function TeamsPage() {
     if (!token || !selectedTeam) return;
     setInviting(true);
     setInviteError(null);
+    setInviteSuccess(false);
     try {
       const member = await inviteTeamMember(token, selectedTeam.id, inviteEmail);
       setMembers((prev) => [...prev, member]);
       setInviteEmail("");
+      setInviteSuccess(true);
+      setTimeout(() => setInviteSuccess(false), 3000);
     } catch (err: unknown) {
       setInviteError(err instanceof Error ? err.message : "Failed to invite member.");
     } finally {
@@ -106,147 +114,187 @@ export default function TeamsPage() {
 
   const isOwner = selectedTeam && user && selectedTeam.owner_id === user.id;
 
-  return (
-    <div className="min-h-screen bg-slate-50 dark:bg-navy-900 text-slate-900 dark:text-slate-200">
-      <div className="max-w-6xl mx-auto px-4 py-8 flex gap-8">
-        <Sidebar />
-        <main className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-xl font-mono font-semibold text-slate-900 dark:text-slate-100">Teams</h1>
-            <button
-              onClick={() => setShowCreateForm((v) => !v)}
-              className="px-3 py-1.5 rounded bg-accent text-black text-sm font-mono font-medium hover:bg-accent/80 transition-colors"
-            >
-              {showCreateForm ? "Cancel" : "+ New Team"}
-            </button>
-          </div>
+  // Display a shortened ID with a title tooltip so the full UUID is accessible
+  function shortId(id: string) {
+    return id.slice(0, 8) + "…";
+  }
 
-          {showCreateForm && (
-            <form onSubmit={handleCreateTeam} className="mb-6 p-4 rounded border border-surface-border bg-surface flex gap-3 items-end">
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-8 flex gap-8">
+      <Sidebar />
+      <main className="flex-1 min-w-0">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <p className="section-title">Teams</p>
+            {!fetching && (
+              <p className="text-slate-400 text-sm mono mt-1">
+                {teams.length} {teams.length === 1 ? "team" : "teams"}
+              </p>
+            )}
+          </div>
+          <button
+            onClick={() => setShowCreateForm((v) => !v)}
+            className="btn-primary text-sm py-1.5 px-4"
+          >
+            {showCreateForm ? "Cancel" : "+ New Team"}
+          </button>
+        </div>
+
+        {showCreateForm && (
+          <div className="card p-4 mb-6">
+            <p className="data-label mb-3">New Team</p>
+            <form onSubmit={handleCreateTeam} className="flex gap-3 items-end">
               <div className="flex-1">
-                <label className="block text-xs text-slate-400 mb-1">Team name</label>
+                <label className="data-label block mb-1">Team name</label>
                 <input
                   value={newTeamName}
                   onChange={(e) => setNewTeamName(e.target.value)}
                   required
-                  className="w-full px-3 py-1.5 rounded bg-background border border-surface-border text-sm font-mono text-slate-200 focus:outline-none focus:border-accent"
+                  className={fieldClass}
                   placeholder="e.g. NOC Team"
+                  autoFocus
                 />
               </div>
-              <button
-                type="submit"
-                disabled={creating}
-                className="px-4 py-1.5 rounded bg-accent text-black text-sm font-mono font-medium disabled:opacity-50"
-              >
+              <button type="submit" disabled={creating} className="btn-primary disabled:opacity-50 text-sm">
                 {creating ? "Creating…" : "Create"}
               </button>
             </form>
-          )}
+          </div>
+        )}
 
-          {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
+        {error && <div className="card p-4 text-mono-red text-sm mono mb-4">{error}</div>}
 
-          {fetching ? (
-            <div className="space-y-2">{[0, 1].map((i) => <div key={i} className="h-12 bg-surface rounded animate-pulse" />)}</div>
-          ) : teams.length === 0 ? (
-            <p className="text-slate-500 text-sm font-mono">No teams yet. Create one to collaborate.</p>
-          ) : (
-            <div className="flex gap-6">
-              {/* Team list */}
-              <div className="w-48 shrink-0 space-y-1">
-                {teams.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setSelectedTeam(t)}
-                    className={`w-full text-left px-3 py-2 rounded text-sm font-mono transition-colors ${
-                      selectedTeam?.id === t.id
-                        ? "bg-surface text-accent"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-surface-hover"
-                    }`}
-                  >
-                    {t.name}
-                  </button>
-                ))}
-              </div>
+        {fetching ? (
+          <div className="space-y-2">
+            {[0, 1].map((i) => <div key={i} className="h-12 bg-surface rounded animate-pulse" />)}
+          </div>
+        ) : teams.length === 0 ? (
+          <div className="card p-10 text-center">
+            <p className="font-mono text-slate-900 dark:text-slate-200 mb-2">No teams yet</p>
+            <p className="text-sm text-slate-500 mb-5">
+              Teams let you share watchlists and collaborate with your colleagues.
+            </p>
+            <button onClick={() => setShowCreateForm(true)} className="btn-primary text-sm">
+              Create your first team
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-6">
+            {/* Team list */}
+            <nav className="w-44 shrink-0 space-y-1">
+              {teams.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setSelectedTeam(t)}
+                  className={`w-full text-left px-3 py-2 rounded text-sm font-mono transition-colors ${
+                    selectedTeam?.id === t.id
+                      ? "bg-surface text-accent"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-surface-hover"
+                  }`}
+                >
+                  {t.name}
+                </button>
+              ))}
+            </nav>
 
-              {/* Team detail */}
-              {selectedTeam && (
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-4">
+            {/* Team detail */}
+            {selectedTeam && (
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
                     <h2 className="font-mono text-slate-900 dark:text-slate-100 font-semibold">{selectedTeam.name}</h2>
-                    {isOwner && (
-                      <button
-                        onClick={() => handleDeleteTeam(selectedTeam.id)}
-                        className="text-xs text-red-400 hover:text-red-300"
-                      >
-                        Delete team
-                      </button>
-                    )}
+                    <p className="text-xs text-slate-500 mono mt-0.5">
+                      {members.length} {members.length === 1 ? "member" : "members"}
+                      {isOwner && <span className="ml-2 text-accent">· you are the owner</span>}
+                    </p>
                   </div>
-
                   {isOwner && (
-                    <form onSubmit={handleInvite} className="mb-4 flex gap-2 items-end">
+                    <button
+                      onClick={() => handleDeleteTeam(selectedTeam.id)}
+                      className="btn-ghost text-xs px-2 py-1 text-mono-red hover:text-mono-red"
+                    >
+                      delete team
+                    </button>
+                  )}
+                </div>
+
+                {isOwner && (
+                  <div className="card p-4 mb-4">
+                    <p className="data-label mb-3">Invite member</p>
+                    <form onSubmit={handleInvite} className="flex gap-2 items-end">
                       <div className="flex-1">
-                        <label className="block text-xs text-slate-400 mb-1">Invite by email</label>
                         <input
                           type="email"
                           value={inviteEmail}
                           onChange={(e) => setInviteEmail(e.target.value)}
                           required
-                          className="w-full px-3 py-1.5 rounded bg-background border border-surface-border text-sm font-mono text-slate-200 focus:outline-none focus:border-accent"
-                          placeholder="user@example.com"
+                          className={fieldClass}
+                          placeholder="colleague@example.com"
                         />
                       </div>
-                      <button
-                        type="submit"
-                        disabled={inviting}
-                        className="px-3 py-1.5 rounded border border-surface-border text-sm font-mono text-slate-300 hover:text-slate-100 disabled:opacity-50"
-                      >
+                      <button type="submit" disabled={inviting} className="btn-primary text-sm disabled:opacity-50">
                         {inviting ? "Inviting…" : "Invite"}
                       </button>
                     </form>
-                  )}
-                  {inviteError && <p className="text-red-400 text-xs mb-3">{inviteError}</p>}
+                    {inviteError && <p className="font-mono text-xs text-mono-red mt-2">✕ {inviteError}</p>}
+                    {inviteSuccess && <p className="font-mono text-xs text-mono-green mt-2">✓ Member added</p>}
+                  </div>
+                )}
 
-                  <div className="border border-surface-border rounded overflow-hidden">
-                    <table className="w-full text-sm font-mono">
-                      <thead>
-                        <tr className="border-b border-surface-border bg-surface">
-                          <th className="text-left px-4 py-2 text-slate-400 font-normal">User ID</th>
-                          <th className="text-left px-4 py-2 text-slate-400 font-normal">Role</th>
-                          {isOwner && <th className="px-4 py-2" />}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {members.map((m) => (
-                          <tr key={m.id} className="border-b border-surface-border last:border-0">
-                            <td className="px-4 py-3 text-slate-400 text-xs">{m.user_id}</td>
-                            <td className="px-4 py-3">
-                              <span className={`text-xs px-2 py-0.5 rounded ${m.role === "owner" ? "bg-accent/20 text-accent" : "bg-surface text-slate-400"}`}>
+                <div className="card overflow-hidden">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="border-b border-surface-border">
+                        <th className="table-cell text-left data-label">Member</th>
+                        <th className="table-cell text-left data-label">Role</th>
+                        {isOwner && <th className="table-cell text-left data-label">Actions</th>}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {members.map((m) => {
+                        const isMe = user && m.user_id === user.id;
+                        return (
+                          <tr key={m.id} className="table-row">
+                            <td className="table-cell">
+                              <div className="flex items-center gap-2">
+                                <MemberAvatar label={m.user_id} />
+                                <span className="font-mono text-xs text-slate-500 dark:text-slate-400" title={m.user_id}>
+                                  {isMe ? (
+                                    <span className="text-accent">you ({shortId(m.user_id)})</span>
+                                  ) : (
+                                    shortId(m.user_id)
+                                  )}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="table-cell">
+                              <span className={`badge ${m.role === "owner" ? "badge-blue" : "badge-gray"}`}>
                                 {m.role}
                               </span>
                             </td>
-                            {isOwner && m.role !== "owner" && (
-                              <td className="px-4 py-3 text-right">
-                                <button
-                                  onClick={() => handleRemoveMember(m.user_id)}
-                                  className="text-xs text-red-400 hover:text-red-300"
-                                >
-                                  Remove
-                                </button>
+                            {isOwner && (
+                              <td className="table-cell">
+                                {m.role !== "owner" && (
+                                  <button
+                                    onClick={() => handleRemoveMember(m.user_id)}
+                                    className="btn-ghost text-xs px-2 py-1 text-mono-red hover:text-mono-red"
+                                  >
+                                    remove
+                                  </button>
+                                )}
                               </td>
                             )}
-                            {isOwner && m.role === "owner" && <td />}
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
-              )}
-            </div>
-          )}
-        </main>
-      </div>
+              </div>
+            )}
+          </div>
+        )}
+      </main>
     </div>
   );
 }

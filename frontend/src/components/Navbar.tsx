@@ -22,6 +22,14 @@ function MoonIcon() {
   );
 }
 
+function UserAvatar({ email }: { email: string }) {
+  return (
+    <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent/20 text-accent font-mono text-xs font-semibold shrink-0 select-none">
+      {email.charAt(0).toUpperCase()}
+    </span>
+  );
+}
+
 export default function Navbar() {
   const { user, logout, loading } = useAuth();
   const { theme, toggle } = useTheme();
@@ -29,28 +37,33 @@ export default function Navbar() {
   return (
     <nav className="border-b border-slate-200 bg-white px-6 py-3 flex items-center justify-between dark:border-surface-border dark:bg-navy-800">
       <Link href="/" className="flex items-center gap-3">
-        <span className="font-mono font-medium text-accent tracking-wider text-sm">INTERNET TOOLKIT</span>
+        <span className="font-mono font-semibold text-accent tracking-wider text-sm">INTERNET TOOLKIT</span>
         <span className="hidden sm:block text-xs text-slate-400 dark:text-slate-600 border-l border-slate-200 dark:border-surface-border pl-3">
           DNS · BGP · mail · TLS · reachability
         </span>
       </Link>
-      <div className="flex items-center gap-3 text-sm">
+
+      <div className="flex items-center gap-2 text-sm">
         {!loading && (
           user ? (
             <>
-              <span className="text-slate-400 font-mono text-xs hidden sm:block">{user.email}</span>
-              <Link href="/dashboard" className="btn-ghost text-sm py-1">Dashboard</Link>
-              <button onClick={logout} className="btn-ghost text-sm py-1">Logout</button>
+              <div className="hidden sm:flex items-center gap-2 mr-1">
+                <UserAvatar email={user.email} />
+                <span className="text-slate-500 dark:text-slate-400 font-mono text-xs truncate max-w-[160px]">
+                  {user.email}
+                </span>
+              </div>
+              <Link href="/dashboard" className="btn-ghost text-sm py-1 px-3">Dashboard</Link>
+              <button onClick={logout} className="btn-ghost text-sm py-1 px-3">Logout</button>
             </>
           ) : (
             <>
-              <Link href="/login" className="btn-ghost text-sm py-1">Login</Link>
+              <Link href="/login" className="btn-ghost text-sm py-1 px-3">Login</Link>
               <Link href="/register" className="btn-primary text-sm py-1 px-3">Register</Link>
             </>
           )
         )}
 
-        {/* Theme toggle */}
         <button
           onClick={toggle}
           aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
