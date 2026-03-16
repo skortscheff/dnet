@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { search, saveResult, getMyIp } from "@/lib/api";
+import { search, saveResult } from "@/lib/api";
 import type { LookupResponse } from "@/lib/types";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -44,15 +44,17 @@ export default function Home() {
   const handleMyIp = async () => {
     setMyIpLoading(true);
     setError(null);
-    setResult(null);
-    setSaved(false);
     try {
-      const data = await getMyIp();
-      setQuery(data.normalized);
-      setResult(data);
+      // Detect the public IP client-side so we get the browser's real external IP,
+      // not the Docker bridge or proxy IP that the server would see.
+      const ipRes = await fetch("https://api64.ipify.org?format=json");
+      if (!ipRes.ok) throw new Error("IP detection service unavailable");
+      const { ip } = await ipRes.json() as { ip: string };
+      setMyIpLoading(false);
+      setQuery(ip);
+      handleSearch(ip);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Could not detect your IP");
-    } finally {
+      setError(e instanceof Error ? e.message : "Could not detect your public IP");
       setMyIpLoading(false);
     }
   };
@@ -112,18 +114,31 @@ export default function Home() {
           {loading ? "..." : "Search"}
         </button>
       </div>
-      <div className="flex items-center justify-between mb-8">
-        <p className="text-xs text-slate-600 font-mono">
-          Accepts IP, domain, ASN (AS15169), CIDR (1.1.1.0/24), URL, or email address
-        </p>
-        <button
-          onClick={handleMyIp}
-          disabled={myIpLoading || loading}
-          className="text-xs font-mono text-accent hover:text-accent-hover transition-colors disabled:opacity-50 shrink-0 ml-4"
-        >
-          {myIpLoading ? "detecting..." : "What's my IP? →"}
-        </button>
-      </div>
+      <p className="text-xs text-slate-500 font-mono mb-6">
+        Accepts IP, domain, ASN (AS15169), CIDR (1.1.1.0/24), URL, or email address
+      </p>
+
+      {/* What's my IP card — hidden once results are displayed */}
+      {!result && !loading && <button
+        onClick={handleMyIp}
+        disabled={myIpLoading}
+        className="w-full mb-8 card p-4 flex items-center gap-4 text-left hover:border-accent/50 transition-colors group disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent/20 transition-colors">
+          <span className="text-accent text-lg leading-none">⊕</span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-mono text-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-accent transition-colors">
+            {myIpLoading ? "Detecting your IP…" : "What's my IP?"}
+          </p>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Find your public IP address, location, and ASN instantly
+          </p>
+        </div>
+        <span className="font-mono text-accent text-sm shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
+          {myIpLoading ? "…" : "→"}
+        </span>
+      </button>}
 
       {/* Status line */}
       {loading && (
