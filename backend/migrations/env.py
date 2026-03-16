@@ -14,20 +14,23 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Import Base and all models here to enable autogenerate support.
-# Example: from app.models.base import Base
-# target_metadata = Base.metadata
-target_metadata = None
+from app.core.database import Base
+from app.auth.models import User  # noqa: F401
+from app.api_keys.models import ApiKey  # noqa: F401
+from app.saved_results.models import SavedResult  # noqa: F401
+target_metadata = Base.metadata
 
-# Override sqlalchemy.url from environment if set
-database_url = os.getenv("DATABASE_URL")
-if database_url:
-    # Alembic uses sync drivers; swap asyncpg for psycopg2
-    database_url = database_url.replace("postgresql+asyncpg://", "postgresql://")
-    config.set_main_option("sqlalchemy.url", database_url)
+# Override sqlalchemy.url from environment if set.
+# The online migration path uses async_engine_from_config which requires asyncpg.
+# The offline path uses a sync URL, so swap asyncpg -> psycopg2 only there.
+database_url = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url") or "")
+# Ensure we have an asyncpg URL for the async engine
+async_database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1) if "postgresql+asyncpg" not in database_url else database_url
+config.set_main_option("sqlalchemy.url", async_database_url)
 
 
 def run_migrations_offline() -> None:
-    url = config.get_main_option("sqlalchemy.url")
+    url = (config.get_main_option("sqlalchemy.url") or "").replace("postgresql+asyncpg://", "postgresql://", 1)
     context.configure(
         url=url,
         target_metadata=target_metadata,
