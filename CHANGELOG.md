@@ -4,6 +4,18 @@ All notable changes to this project are documented here.
 
 ---
 
+## [Unreleased] — Dark/light mode theme toggle
+
+### Added
+- **Theme toggle button** in the top-right of the navbar — switches between dark and light mode
+- **ThemeProvider** (`lib/theme.tsx`) manages the `dark` class on `<html>`, persists preference to `localStorage`
+- **Full light mode** — backgrounds, surfaces, borders, and badges all adapt via CSS custom properties; text colors adapt via CSS cascade overrides (no per-component changes required)
+- CSS variable system for `--color-bg`, `--color-bg-secondary`, `--color-surface`, `--color-surface-hover`, `--color-border` with `:root` (light) and `.dark` definitions
+- Tailwind `darkMode: "class"` enabled; `navy-900`, `navy-800`, `surface.*` color tokens now reference CSS variables and adapt automatically
+- Badge, button, card, and input component classes updated with proper `dark:` variants
+
+---
+
 ## [Unreleased] — Homepage enhancements
 
 ### Added

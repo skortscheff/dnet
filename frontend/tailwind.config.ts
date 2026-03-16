@@ -2,19 +2,21 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
         navy: {
           950: "#04080f",
-          900: "#060b14",
-          800: "#0a1020",
+          // 900 and 800 are now theme-aware via CSS vars
+          900: "rgb(var(--color-bg) / <alpha-value>)",
+          800: "rgb(var(--color-bg-secondary) / <alpha-value>)",
           700: "#0d1528",
         },
         surface: {
-          DEFAULT: "#0f1520",
-          hover: "#141c2e",
-          border: "#1e2d45",
+          DEFAULT: "rgb(var(--color-surface) / <alpha-value>)",
+          hover: "rgb(var(--color-surface-hover) / <alpha-value>)",
+          border: "rgb(var(--color-border) / <alpha-value>)",
         },
         accent: {
           DEFAULT: "#0ea5e9",
