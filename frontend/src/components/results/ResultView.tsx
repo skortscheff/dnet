@@ -18,18 +18,27 @@ export default function ResultView({ result, onSearch }: Props) {
   const { input_type, result: data, pivots, error, normalized } = result;
   const [mailData, setMailData] = useState<Record<string, unknown> | null>(null);
   const [mailLoading, setMailLoading] = useState(false);
+  const [mailError, setMailError] = useState<string | null>(null);
 
   useEffect(() => {
     if (input_type !== "domain" || !normalized) {
       setMailData(null);
+      setMailError(null);
       return;
     }
     setMailLoading(true);
     setMailData(null);
+    setMailError(null);
     fetch(`/api/v1/mail/${encodeURIComponent(normalized)}`)
-      .then((r) => r.ok ? r.json() : null)
-      .then((d) => setMailData(d?.result ?? null))
-      .catch(() => setMailData(null))
+      .then((r) => r.ok ? r.json() : r.json().then((b: { detail?: string }) => Promise.reject(b.detail ?? `HTTP ${r.status}`)))
+      .then((d: { result?: Record<string, unknown>; error?: string | null }) => {
+        if (d.error) {
+          setMailError(d.error);
+        } else {
+          setMailData(d.result ?? null);
+        }
+      })
+      .catch((err: unknown) => setMailError(typeof err === "string" ? err : "Mail diagnostics unavailable"))
       .finally(() => setMailLoading(false));
   }, [input_type, normalized]);
 
@@ -51,7 +60,12 @@ export default function ResultView({ result, onSearch }: Props) {
               ▶ Checking mail health...
             </div>
           )}
-          {mailData && <MailResult data={mailData} />}
+          {mailError && !mailLoading && (
+            <div className="card p-4 font-mono text-sm text-mono-red">
+              ✕ Mail diagnostics: {mailError}
+            </div>
+          )}
+          {mailData && !mailLoading && <MailResult data={mailData} />}
         </>
       ) : input_type === "asn" ? (
         <BgpResult data={data} input_type="asn" />

@@ -18,11 +18,18 @@ async def get_mail(domain: str) -> LookupResponse:
     if not _DOMAIN_RE.match(domain):
         raise HTTPException(status_code=422, detail=f"Invalid domain: {domain!r}")
 
-    result = await lookup_mail(domain)
+    error: str | None = None
+    result: dict = {}
+    try:
+        result = await lookup_mail(domain)
+    except Exception as exc:
+        error = str(exc)
+
     return LookupResponse(
         input=domain,
         input_type="domain",
         normalized=domain,
         result=result,
+        error=error,
         pivots=[f"/api/v1/dns/{domain}"],
     )

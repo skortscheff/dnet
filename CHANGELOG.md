@@ -19,6 +19,15 @@ All notable changes to this project are documented here.
 
 ---
 
+## [Unreleased] — Fix MX records and mail diagnostics (closes #1)
+
+### Fixed
+- **MX records blank in DNS result** — `dns/service.py` was calling `r.to_text()` for all record types; for MX this produces a raw string (`"10 aspmx.l.google.com."`) rather than the `{priority, exchange}` object that `DnsResult.tsx` expects. MX records are now parsed into structured dicts sorted by priority, consistent with the mail service.
+- **Mail diagnostics silently disappearing** — `ResultView.tsx` swallowed all fetch errors and showed nothing. Now surfaces a visible error card (`✕ Mail diagnostics: <reason>`) when the fetch fails or returns a non-ok response.
+- **Mail router unhandled exceptions** — `mail/router.py` had no top-level try/except; an unexpected error in `lookup_mail` would return a raw 500 with no structured body. Errors are now caught and returned as `LookupResponse.error` so the frontend can display them.
+
+---
+
 ## [Unreleased] — Mail health fix
 
 ### Fixed
