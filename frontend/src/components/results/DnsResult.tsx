@@ -57,7 +57,7 @@ function Section({
     <div className="border-b border-surface-border last:border-0">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between py-2 px-0 text-left hover:bg-white/[0.02] transition-colors"
+        className="w-full flex items-center justify-between py-2 px-0 text-left hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
       >
         <span className="section-title mb-0 inline-flex items-center gap-2">
           {title}
@@ -179,7 +179,7 @@ export default function DnsResult({ data }: Props) {
           <tbody>
             {records.TXT.map((txt, i) => (
               <tr key={i} className="table-row">
-                <td className="table-cell mono text-slate-300 break-all whitespace-pre-wrap">
+                <td className="table-cell mono text-slate-700 dark:text-slate-300 break-all whitespace-pre-wrap">
                   {txt}
                 </td>
               </tr>
@@ -247,7 +247,7 @@ export default function DnsResult({ data }: Props) {
 
   return (
     <div className="card p-5">
-      <div className="font-mono text-xl text-slate-100 tracking-tight mb-4">
+      <div className="font-mono text-xl text-slate-900 dark:text-slate-100 tracking-tight mb-4">
         {name}
       </div>
       {sections.length > 0 ? (

@@ -56,7 +56,7 @@ export default function HttpResult({ data }: Props) {
     <div className="card p-5 space-y-5">
       {/* URL header */}
       <div>
-        <div className="font-mono text-base text-slate-100 break-all">
+        <div className="font-mono text-base text-slate-900 dark:text-slate-100 break-all">
           {d.url ?? "—"}
         </div>
         <div className="flex flex-wrap gap-2 mt-2">
@@ -94,7 +94,7 @@ export default function HttpResult({ data }: Props) {
                   {hop.error ? (
                     <span className="mono text-mono-red break-all">{hop.error}</span>
                   ) : (
-                    <span className="mono text-slate-300 break-all">{hop.url}</span>
+                    <span className="mono text-slate-700 dark:text-slate-300 break-all">{hop.url}</span>
                   )}
                 </div>
               </div>
@@ -102,7 +102,7 @@ export default function HttpResult({ data }: Props) {
           </div>
           {d.final_url && d.final_url !== chain[chain.length - 1]?.url && (
             <div className="mt-2 text-xs font-mono text-slate-500">
-              Final: <span className="text-slate-300">{d.final_url}</span>
+              Final: <span className="text-slate-700 dark:text-slate-300">{d.final_url}</span>
             </div>
           )}
         </div>
@@ -126,7 +126,7 @@ export default function HttpResult({ data }: Props) {
                   <td className="table-cell data-label">{label}</td>
                   <td className="table-cell data-value break-all">
                     {present ? (
-                      <span className="text-slate-300">{val}</span>
+                      <span className="text-slate-700 dark:text-slate-300">{val}</span>
                     ) : (
                       <span className="text-slate-600">missing</span>
                     )}

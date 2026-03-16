@@ -5,7 +5,6 @@
 
 /* ─── Theme tokens ─────────────────────────────────────────────────────────── */
 
-/* Light mode (default) */
 :root {
   --color-bg:              248 250 252;   /* slate-50  */
   --color-bg-secondary:    241 245 249;   /* slate-100 */
@@ -14,7 +13,6 @@
   --color-border:          226 232 240;   /* slate-200 */
 }
 
-/* Dark mode */
 .dark {
   --color-bg:              6 11 20;       /* navy-900  */
   --color-bg-secondary:    10 16 32;      /* navy-800  */
@@ -23,27 +21,25 @@
   --color-border:          30 45 69;      /* surface-border */
 }
 
-/* ─── Text colour overrides ─────────────────────────────────────────────────
-   Tailwind text-slate-* utilities are too light for a white background.
-   These CSS overrides reclaim the cascade in light mode so every TSX file
-   that uses text-slate-200/300 gets a legible dark colour automatically —
-   without touching individual component files.
+/* ─── Text colour cascade overrides ────────────────────────────────────────
+   Non-layered rules beat @layer utilities, so these overrides win in
+   light mode without touching individual TSX files.
 ────────────────────────────────────────────────────────────────────────────── */
 html:not(.dark) .text-slate-100,
 html:not(.dark) .text-slate-200 {
-  color: #0f172a; /* slate-900 */
+  color: #0f172a !important; /* slate-900 */
 }
 html:not(.dark) .text-slate-300 {
-  color: #1e293b; /* slate-800 */
+  color: #1e293b !important; /* slate-800 */
 }
 html:not(.dark) .text-slate-400 {
-  color: #334155; /* slate-700 */
+  color: #334155 !important; /* slate-700 */
 }
 html:not(.dark) .text-slate-500 {
-  color: #475569; /* slate-600 */
+  color: #475569 !important; /* slate-600 */
 }
 html:not(.dark) .text-slate-600 {
-  color: #64748b; /* slate-500 — kept readable but not as faint */
+  color: #64748b !important; /* slate-500 */
 }
 
 /* ─── Base ──────────────────────────────────────────────────────────────────── */
@@ -51,7 +47,11 @@ html:not(.dark) .text-slate-600 {
 @layer base {
   body {
     background-color: rgb(var(--color-bg));
-    @apply text-slate-900 dark:text-slate-200 font-sans antialiased;
+    color: #0f172a;
+    @apply font-sans antialiased;
+  }
+  .dark body {
+    color: #e2e8f0;
   }
   * {
     border-color: rgb(var(--color-border));
@@ -65,56 +65,68 @@ html:not(.dark) .text-slate-600 {
     @apply font-mono text-sm;
   }
   .data-label {
-    @apply text-xs uppercase tracking-widest text-slate-500 dark:text-slate-500 font-sans;
+    @apply text-xs uppercase tracking-widest font-sans;
+    color: #64748b;
   }
   .data-value {
-    @apply font-mono text-sm text-slate-800 dark:text-slate-200;
+    @apply font-mono text-sm;
+    color: #1e293b;
+  }
+  .dark .data-value {
+    color: #e2e8f0;
   }
   .badge {
     @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-medium;
   }
-  .badge-green {
-    @apply badge bg-green-100 text-green-800 border border-green-300
-           dark:bg-green-950 dark:text-mono-green dark:border-green-800;
-  }
-  .badge-red {
-    @apply badge bg-red-100 text-red-700 border border-red-300
-           dark:bg-red-950 dark:text-mono-red dark:border-red-900;
-  }
-  .badge-yellow {
-    @apply badge bg-yellow-100 text-yellow-800 border border-yellow-300
-           dark:bg-yellow-950 dark:text-mono-yellow dark:border-yellow-900;
-  }
-  .badge-blue {
-    @apply badge bg-sky-100 text-sky-700 border border-sky-300
-           dark:bg-sky-950 dark:text-accent dark:border-sky-800;
-  }
-  .badge-gray {
-    @apply badge bg-slate-100 text-slate-600 border border-slate-300
-           dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700;
-  }
+  /* Light/dark badge variants */
+  .badge-green  { @apply badge bg-green-100  text-green-800  border border-green-300; }
+  .badge-red    { @apply badge bg-red-100    text-red-700    border border-red-300; }
+  .badge-yellow { @apply badge bg-yellow-100 text-yellow-800 border border-yellow-300; }
+  .badge-blue   { @apply badge bg-sky-100    text-sky-700    border border-sky-300; }
+  .badge-gray   { @apply badge bg-slate-100  text-slate-600  border border-slate-300; }
+  .dark .badge-green  { @apply bg-green-950  text-green-400  border-green-800; }
+  .dark .badge-red    { @apply bg-red-950    text-red-400    border-red-900; }
+  .dark .badge-yellow { @apply bg-yellow-950 text-yellow-400 border-yellow-900; }
+  .dark .badge-blue   { @apply bg-sky-950    text-sky-400    border-sky-800; }
+  .dark .badge-gray   { @apply bg-slate-800  text-slate-400  border-slate-700; }
+
   .card {
-    @apply bg-white border border-slate-200 rounded
-           dark:bg-surface dark:border-surface-border;
+    @apply border rounded;
+    background-color: rgb(var(--color-surface));
+    border-color: rgb(var(--color-border));
   }
   .btn-primary {
     @apply bg-accent hover:bg-accent-hover text-white font-medium px-4 py-2 rounded transition-colors;
   }
   .btn-ghost {
-    @apply text-slate-600 hover:text-slate-900 font-medium px-4 py-2 rounded transition-colors hover:bg-slate-100
-           dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-surface-hover;
+    @apply font-medium px-4 py-2 rounded transition-colors;
+    color: #475569;
   }
+  .btn-ghost:hover {
+    color: #0f172a;
+    background-color: #f1f5f9;
+  }
+  .dark .btn-ghost        { color: #94a3b8; }
+  .dark .btn-ghost:hover  { color: #e2e8f0; background-color: rgb(var(--color-surface-hover)); }
+
   .input-field {
-    @apply bg-slate-50 border border-slate-200 rounded px-3 py-2 text-sm text-slate-900
-           placeholder-slate-400 focus:outline-none focus:border-accent transition-colors w-full
-           dark:bg-navy-800 dark:border-surface-border dark:text-slate-200 dark:placeholder-slate-600;
+    @apply border rounded px-3 py-2 text-sm focus:outline-none focus:border-accent transition-colors w-full;
+    background-color: rgb(var(--color-bg-secondary));
+    border-color: rgb(var(--color-border));
+    color: #0f172a;
   }
+  .input-field::placeholder { color: #94a3b8; }
+  .dark .input-field        { color: #e2e8f0; }
+  .dark .input-field::placeholder { color: #475569; }
+
   .section-title {
-    @apply text-xs uppercase tracking-widest text-slate-500 mb-3 font-sans;
+    @apply text-xs uppercase tracking-widest mb-3 font-sans;
+    color: #64748b;
   }
   .table-row {
-    @apply border-b border-slate-200 last:border-0 dark:border-surface-border;
+    border-bottom: 1px solid rgb(var(--color-border));
   }
+  .table-row:last-child { border-bottom: none; }
   .table-cell {
     @apply py-2 px-3 text-sm;
   }

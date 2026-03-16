@@ -32,7 +32,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="card p-6">
-          <h1 className="font-mono text-base text-slate-200 mb-6">Sign in</h1>
+          <h1 className="font-mono text-base text-slate-900 dark:text-slate-200 mb-6">Sign in</h1>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label className="data-label block mb-1">Email</label>

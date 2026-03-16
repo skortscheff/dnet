@@ -178,7 +178,7 @@ export default function ApiKeysPage() {
               ) : (
                 keys.map((k) => (
                   <tr key={k.id} className="table-row">
-                    <td className="table-cell text-slate-200 text-sm">{k.name}</td>
+                    <td className="table-cell text-slate-900 dark:text-slate-200 text-sm">{k.name}</td>
                     <td className="table-cell mono text-accent">{k.prefix}</td>
                     <td className="table-cell text-slate-400 text-sm">
                       {formatDate(k.created_at)}
@@ -205,7 +205,7 @@ export default function ApiKeysPage() {
         {/* Usage example */}
         <div className="card p-4">
           <p className="data-label mb-3">Usage Example</p>
-          <pre className="mono text-slate-300 text-xs overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
+          <pre className="mono text-slate-700 dark:text-slate-300 text-xs overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
             {`curl -H "X-API-Key: itk_YOUR_KEY" https://your-domain/api/v1/search \\
   -H "Content-Type: application/json" \\
   -d '{"q":"8.8.8.8"}'`}

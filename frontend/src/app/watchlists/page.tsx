@@ -93,12 +93,12 @@ export default function WatchlistsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-slate-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-navy-900 text-slate-900 dark:text-slate-200">
       <div className="max-w-6xl mx-auto px-4 py-8 flex gap-8">
         <Sidebar />
         <main className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-xl font-mono font-semibold text-slate-100">Watchlists</h1>
+            <h1 className="text-xl font-mono font-semibold text-slate-900 dark:text-slate-100">Watchlists</h1>
             <button
               onClick={() => setShowForm((v) => !v)}
               className="px-3 py-1.5 rounded bg-accent text-black text-sm font-mono font-medium hover:bg-accent/80 transition-colors"

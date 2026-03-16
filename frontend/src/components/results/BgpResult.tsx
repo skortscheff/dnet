@@ -61,7 +61,7 @@ export default function BgpResult({ data, input_type }: Props) {
       <div className="card p-5 space-y-5">
         {/* Header */}
         <div>
-          <div className="font-mono text-2xl text-slate-100 tracking-tight">
+          <div className="font-mono text-2xl text-slate-900 dark:text-slate-100 tracking-tight">
             {d.asn ?? "—"}
           </div>
           {(d.name || d.description) && (
@@ -125,7 +125,7 @@ export default function BgpResult({ data, input_type }: Props) {
     <div className="card p-5 space-y-5">
       {/* Header */}
       <div>
-        <div className="font-mono text-2xl text-slate-100 tracking-tight">
+        <div className="font-mono text-2xl text-slate-900 dark:text-slate-100 tracking-tight">
           {d.prefix ?? "—"}
         </div>
         {(d.name || d.description) && (

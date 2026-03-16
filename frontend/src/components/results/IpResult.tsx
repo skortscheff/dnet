@@ -49,7 +49,7 @@ export default function IpResult({ data }: Props) {
       <div className="flex flex-col sm:flex-row sm:items-start gap-4">
         {/* Left: IP + version + classification */}
         <div className="min-w-0 flex-shrink-0">
-          <div className="font-mono text-2xl text-slate-100 tracking-tight break-all">
+          <div className="font-mono text-2xl text-slate-900 dark:text-slate-100 tracking-tight break-all">
             {d.ip ?? "—"}
           </div>
           <div className="flex flex-wrap gap-2 mt-2">

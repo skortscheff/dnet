@@ -72,7 +72,7 @@ export default function TlsResult({ data }: Props) {
     <div className="card p-5 space-y-5">
       {/* Header */}
       <div>
-        <div className="font-mono text-xl text-slate-100 tracking-tight">
+        <div className="font-mono text-xl text-slate-900 dark:text-slate-100 tracking-tight">
           {d.host ?? "—"}
           {d.port != null && (
             <span className="text-slate-500">:{d.port}</span>
@@ -109,12 +109,12 @@ export default function TlsResult({ data }: Props) {
             />
             <Row
               label="NOT BEFORE"
-              value={<span className="text-slate-300">{formatDate(d.not_before)}</span>}
+              value={<span className="text-slate-700 dark:text-slate-300">{formatDate(d.not_before)}</span>}
             />
             <Row
               label="NOT AFTER"
               value={
-                <span className={d.expired ? "text-mono-red" : "text-slate-300"}>
+                <span className={d.expired ? "text-mono-red" : "text-slate-700 dark:text-slate-300"}>
                   {formatDate(d.not_after)}
                 </span>
               }
@@ -127,7 +127,7 @@ export default function TlsResult({ data }: Props) {
       {d.cipher_suite && (
         <div>
           <div className="section-title">Cipher suite</div>
-          <div className="mono text-slate-300">{d.cipher_suite}</div>
+          <div className="mono text-slate-700 dark:text-slate-300">{d.cipher_suite}</div>
         </div>
       )}
 

@@ -22,7 +22,7 @@ export default function Sidebar() {
           className={`block px-3 py-2 rounded text-sm font-mono transition-colors ${
             path.startsWith(l.href)
               ? "bg-surface text-accent"
-              : "text-slate-400 hover:text-slate-200 hover:bg-surface-hover"
+              : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-surface-hover"
           }`}
         >
           {l.label}

@@ -56,7 +56,7 @@ export default function MailResult({ data }: Props) {
   return (
     <div className="card p-5 space-y-5">
       {/* Domain header */}
-      <div className="font-mono text-xl text-slate-100 tracking-tight">
+      <div className="font-mono text-xl text-slate-900 dark:text-slate-100 tracking-tight">
         {d.domain ?? "—"}
       </div>
 
@@ -204,7 +204,7 @@ export default function MailResult({ data }: Props) {
       {d.bimi && (
         <div>
           <div className="section-title">BIMI</div>
-          <div className="mono text-slate-300 break-all">{d.bimi}</div>
+          <div className="mono text-slate-700 dark:text-slate-300 break-all">{d.bimi}</div>
         </div>
       )}
     </div>

@@ -129,7 +129,7 @@ export default function DashboardPage() {
               ) : (
                 results.map((r) => (
                   <tr key={r.id} className="table-row">
-                    <td className="table-cell mono text-slate-200">
+                    <td className="table-cell mono text-slate-900 dark:text-slate-200">
                       {r.label ? (
                         <span>
                           <span>{r.label}</span>

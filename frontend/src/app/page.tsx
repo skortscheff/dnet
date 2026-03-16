@@ -62,7 +62,7 @@ export default function Home() {
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* Auth CTA for unauthenticated users */}
       {!user && (
-        <div className="mb-8 border border-accent-dim bg-sky-950/30 rounded p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="mb-8 border border-accent-dim bg-sky-50 dark:bg-sky-950/30 rounded p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <p className="text-accent font-mono text-sm font-medium mb-1">Create a free account</p>
             <p className="text-slate-400 text-sm">Save results, set watchlists, and get API access.</p>
@@ -123,7 +123,7 @@ export default function Home() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <span className="badge badge-blue">{result.input_type.toUpperCase()}</span>
-              <span className="font-mono text-sm text-slate-300">{result.normalized}</span>
+              <span className="font-mono text-sm text-slate-700 dark:text-slate-300">{result.normalized}</span>
               {result.error && <span className="badge badge-red">error</span>}
             </div>
             <div className="flex items-center gap-3">

@@ -128,10 +128,10 @@ export default function HomeFeatures({ onExample }: Props) {
             <button
               key={ex.query}
               onClick={() => onExample(ex.query)}
-              className="group flex items-center gap-2 px-3 py-1.5 rounded border border-surface-border bg-surface hover:border-accent hover:bg-navy-800 transition-colors"
+              className="group flex items-center gap-2 px-3 py-1.5 rounded border border-surface-border bg-surface hover:border-accent hover:bg-surface-hover transition-colors"
             >
               <span className="text-xs text-slate-500 font-sans">{ex.type}</span>
-              <span className="font-mono text-sm text-slate-300 group-hover:text-accent transition-colors">
+              <span className="font-mono text-sm text-slate-700 dark:text-slate-300 group-hover:text-accent transition-colors">
                 {ex.label}
               </span>
             </button>
@@ -148,7 +148,7 @@ export default function HomeFeatures({ onExample }: Props) {
               key={wf.title}
               className="card p-4 hover:border-accent/40 transition-colors"
             >
-              <p className="font-mono text-sm text-slate-200 mb-3">{wf.title}</p>
+              <p className="font-mono text-sm text-slate-900 dark:text-slate-200 mb-3">{wf.title}</p>
               <ol className="space-y-1">
                 {wf.steps.map((step, i) => (
                   <li key={i} className="flex items-start gap-2 text-xs font-mono text-slate-500">
@@ -170,7 +170,7 @@ export default function HomeFeatures({ onExample }: Props) {
             <div key={cap.title} className="card p-4 flex flex-col gap-3 hover:border-accent/40 transition-colors">
               <div className="flex items-center gap-2">
                 <span className={`badge ${cap.tagColor}`}>{cap.tag}</span>
-                <span className="font-mono text-sm text-slate-200">{cap.title}</span>
+                <span className="font-mono text-sm text-slate-900 dark:text-slate-200">{cap.title}</span>
               </div>
               <p className="text-xs text-slate-500 font-sans leading-relaxed">{cap.description}</p>
               <ul className="space-y-1">
@@ -190,11 +190,11 @@ export default function HomeFeatures({ onExample }: Props) {
       <section>
         <div className="border border-surface-border rounded p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface">
           <div>
-            <p className="font-mono text-sm text-slate-200 mb-1">JSON API access</p>
+            <p className="font-mono text-sm text-slate-900 dark:text-slate-200 mb-1">JSON API access</p>
             <p className="text-xs text-slate-500 font-sans">
               Every lookup is available as a structured JSON response. Authenticate with an API key to query programmatically.
             </p>
-            <div className="mt-2 font-mono text-xs text-slate-600 bg-navy-900 border border-surface-border rounded px-3 py-1.5 inline-block select-all">
+            <div className="mt-2 font-mono text-xs text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-navy-900 border border-surface-border rounded px-3 py-1.5 inline-block select-all">
               curl https://your-host/api/v1/dns/github.com
             </div>
           </div>

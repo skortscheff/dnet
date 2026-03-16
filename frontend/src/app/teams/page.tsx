@@ -107,12 +107,12 @@ export default function TeamsPage() {
   const isOwner = selectedTeam && user && selectedTeam.owner_id === user.id;
 
   return (
-    <div className="min-h-screen bg-background text-slate-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-navy-900 text-slate-900 dark:text-slate-200">
       <div className="max-w-6xl mx-auto px-4 py-8 flex gap-8">
         <Sidebar />
         <main className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-xl font-mono font-semibold text-slate-100">Teams</h1>
+            <h1 className="text-xl font-mono font-semibold text-slate-900 dark:text-slate-100">Teams</h1>
             <button
               onClick={() => setShowCreateForm((v) => !v)}
               className="px-3 py-1.5 rounded bg-accent text-black text-sm font-mono font-medium hover:bg-accent/80 transition-colors"
@@ -172,7 +172,7 @@ export default function TeamsPage() {
               {selectedTeam && (
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="font-mono text-slate-100 font-semibold">{selectedTeam.name}</h2>
+                    <h2 className="font-mono text-slate-900 dark:text-slate-100 font-semibold">{selectedTeam.name}</h2>
                     {isOwner && (
                       <button
                         onClick={() => handleDeleteTeam(selectedTeam.id)}
