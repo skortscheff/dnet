@@ -312,6 +312,39 @@ docker compose -f compose.yaml -f compose.dev.yaml exec api \
 
 ---
 
+## Corporate / enterprise networks (SSL inspection)
+
+Most users can skip this section.
+
+If your Docker host sits behind a firewall that performs **SSL/TLS inspection** (also called MITM decryption or "SSL decryption"), outbound HTTPS from inside the containers will fail certificate verification because the intercepting firewall substitutes its own CA-signed certificate. You need to inject your organisation's internal CA into the container images.
+
+> **The corporate CA certificate is private company property. Never commit it to this repository or any public git host.**
+
+To add your CA:
+
+```sh
+# 1. Copy the CA bundle to the repo (gitignored — will not be committed)
+cp /path/to/your-corporate-ca.crt backend/corporate-ca.crt
+```
+
+Then edit `backend/Dockerfile` and `worker/Dockerfile` — both files have a commented block near the top showing exactly which two lines to uncomment:
+
+```dockerfile
+# Uncomment these two lines:
+COPY backend/corporate-ca.crt /usr/local/share/ca-certificates/corporate-ca.crt
+# (update-ca-certificates in the RUN step below picks it up automatically)
+```
+
+Rebuild with `make build` (dev) or `make prod-build` (prod). The standard `update-ca-certificates` call already present in the `RUN` step will install your CA alongside the system roots.
+
+Add `backend/corporate-ca.crt` to `.gitignore` if it isn't already:
+
+```sh
+echo "backend/corporate-ca.crt" >> .gitignore
+```
+
+---
+
 ## Backup and restore
 
 ```sh

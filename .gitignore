@@ -16,6 +16,11 @@ node_modules/
 .vercel/
 out/
 
+# Corporate / private CA certificates — never commit company property
+backend/corporate-ca.crt
+backend/*.crt
+worker/*.crt
+
 # Environment files — never commit secrets
 .env.dev
 .env.prod
