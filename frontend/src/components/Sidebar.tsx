@@ -9,6 +9,7 @@ const links = [
   { href: "/alerts", label: "Alerts" },
   { href: "/teams", label: "Teams" },
   { href: "/settings/api-keys", label: "API Keys" },
+  { href: "/settings/appearance", label: "Appearance" },
 ];
 
 export default function Sidebar() {

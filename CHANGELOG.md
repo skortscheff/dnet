@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 
 ---
 
+## [Unreleased] — Dark theme palette picker
+
+### Added
+- **`frontend/src/lib/theme.tsx`** — `PALETTES` constant defining 4 dark color schemes (Navy, Slate, Forest, Midnight); each palette specifies 5 RGB triplets for `--color-bg`, `--color-bg-secondary`, `--color-surface`, `--color-surface-hover`, and `--color-border`. `ThemeCtx` extended with `palette: string` and `setPalette(id)`. On init, `itk_palette` is read from `localStorage` (default `"navy"`) and applied immediately; changes are persisted back to `localStorage`.
+- **`frontend/src/app/settings/appearance/page.tsx`** *(new)* — Settings page under `/settings/appearance` with a 2×2 palette picker grid; each card previews the scheme with three inline color swatches and highlights the active selection with `ring-2 ring-accent`. No auth required — palette is client-only.
+
+### Changed
+- **`frontend/src/components/Sidebar.tsx`** — added "Appearance" link to the settings nav (below "API Keys")
+
+---
+
 ## [Unreleased] — Homepage UX: prominent "What's my IP?" button
 
 ### Changed
