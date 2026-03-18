@@ -3,6 +3,9 @@
 # Usage: bash scripts/deploy.sh [--update]
 set -euo pipefail
 
+# Always run from the repo root regardless of where the script is invoked from
+cd "$(dirname "$0")/.."
+
 COMPOSE="docker compose -f compose.yaml -f compose.prod.yaml"
 
 print() { echo "==> $*"; }

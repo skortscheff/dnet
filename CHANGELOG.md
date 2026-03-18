@@ -25,6 +25,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased] — Portability and deployment
 
+### Fixed
+- **`scripts/deploy.sh`** — script now `cd`s to the repo root at startup (`cd "$(dirname "$0")/.."`) so it can be invoked from any directory (e.g. `sudo bash scripts/deploy.sh` from the repo root, or `sudo bash deploy.sh` from inside `scripts/`). Previously, running from the `scripts/` directory caused `sed: can't read .env.example: No such file or directory` because all relative paths resolved against the working directory instead of the repo root.
+
 ### Added
 - **`scripts/deploy.sh`** — one-command production deploy script: checks prerequisites, generates `.env.prod` with random secrets, builds images, waits for Postgres, runs migrations, starts all services
 - **`nginx/conf.d/ssl.conf.example`** — ready-to-use HTTPS nginx config with Let's Encrypt paths, modern TLS settings, and HSTS; includes inline cert renewal instructions

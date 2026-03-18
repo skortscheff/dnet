@@ -28,6 +28,20 @@ async def _query(name: str, rdtype: str) -> list:
                 key=lambda x: x["priority"],
             )
 
+        if rdtype == "SOA":
+            r = list(answers)[0] if answers else None
+            if r is None:
+                return []
+            return {
+                "mname": r.mname.to_text().rstrip("."),
+                "rname": r.rname.to_text().rstrip("."),
+                "serial": r.serial,
+                "refresh": r.refresh,
+                "retry": r.retry,
+                "expire": r.expire,
+                "minimum": r.minimum,
+            }
+
         return [r.to_text() for r in answers]
     except (dns.exception.DNSException, Exception):
         return []
