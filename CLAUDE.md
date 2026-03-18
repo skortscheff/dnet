@@ -76,6 +76,9 @@ POST /api/v1/search              # Universal input detection + routing
 GET  /api/v1/ip/{ip}
 GET  /api/v1/dns/{name}
 GET  /api/v1/asn/{asn}
+GET  /api/v1/asn/{asn}/prefixes
+GET  /api/v1/asn/{asn}/neighbours
+GET  /api/v1/asn/{asn}/whois
 GET  /api/v1/prefix/{cidr}
 GET  /api/v1/mail/{domain}
 POST /api/v1/http/check

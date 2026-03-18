@@ -4,6 +4,16 @@ All notable changes to this project are documented here.
 
 ---
 
+## [Unreleased] — BGP v1.1: enhanced ASN view
+
+### Added
+- **`frontend/src/components/results/BgpResult.tsx`** — ASN view rewritten with a tabbed UI (Overview / Prefixes / Peers / Whois); tab data is fetched lazily on first activation so the initial lookup stays fast
+- **`GET /api/v1/asn/{asn}/prefixes`** — returns full announced prefix list split by address family with counts; frontend shows paginated IPv4/IPv6 tables with a filter input
+- **`GET /api/v1/asn/{asn}/neighbours`** — upstream / downstream / peer topology via RIPE Stat `asn-neighbours`; frontend renders a connectivity diagram with clickable ASN links
+- **`GET /api/v1/asn/{asn}/whois`** — RDAP WHOIS data fetched from `rdap.iana.org`; exposes handle, name, org, RIR, country, registration/last-changed dates, remarks, and source link
+
+---
+
 ## [Unreleased] — Dark theme palette picker
 
 ### Added
