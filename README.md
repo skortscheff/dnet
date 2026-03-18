@@ -2,6 +2,8 @@
 
 An operator-first network diagnostics platform. Paste any domain, IP, ASN, prefix, URL, or email address and get DNS, BGP, mail, TLS, and reachability analysis — all in one place.
 
+See [ROADMAP.md](ROADMAP.md) for the v0.1 → v1 plan.
+
 ---
 
 ## What it does
