@@ -73,6 +73,15 @@ function applyPalette(id: string) {
   root.style.setProperty("--color-border", palette.vars.border);
 }
 
+function clearPaletteVars() {
+  const root = document.documentElement;
+  root.style.removeProperty("--color-bg");
+  root.style.removeProperty("--color-bg-secondary");
+  root.style.removeProperty("--color-surface");
+  root.style.removeProperty("--color-surface-hover");
+  root.style.removeProperty("--color-border");
+}
+
 interface ThemeCtx {
   theme: Theme;
   toggle: () => void;
@@ -99,7 +108,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     const storedPalette = localStorage.getItem("itk_palette") ?? "navy";
     setPaletteState(storedPalette);
-    applyPalette(storedPalette);
+    if (initialTheme === "dark") applyPalette(storedPalette);
   }, []);
 
   const toggle = () => {
@@ -107,6 +116,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       const next: Theme = prev === "dark" ? "light" : "dark";
       localStorage.setItem("itk_theme", next);
       document.documentElement.classList.toggle("dark", next === "dark");
+      if (next === "dark") applyPalette(palette);
+      else clearPaletteVars();
       return next;
     });
   };
@@ -114,7 +125,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setPalette = (id: string) => {
     setPaletteState(id);
     localStorage.setItem("itk_palette", id);
-    applyPalette(id);
+    if (theme === "dark") applyPalette(id);
   };
 
   return (
